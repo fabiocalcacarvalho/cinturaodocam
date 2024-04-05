@@ -59,20 +59,28 @@ def estatisticas(request):
     # Contagem de defesas de cinturão por jogador
     defesas_cinturao = {}
     for partida in partidas:
-        if partida.detentor_atual.nome in defesas_cinturao:
+        detentor_nome = partida.detentor_atual.nome
+        if detentor_nome in defesas_cinturao:
+            # Se o detentor atual vencer a partida, incrementamos a contagem de defesas
             if partida.detentor_atual == partida.determinar_vencedor():
-                defesas_cinturao[partida.detentor_atual.nome] += 1
+                defesas_cinturao[detentor_nome] += 1
         else:
-            defesas_cinturao[partida.detentor_atual.nome] = 0
+            # Inicializamos a contagem com 1 se o detentor venceu a partida
+            if partida.detentor_atual == partida.determinar_vencedor():
+                defesas_cinturao[detentor_nome] = 1
+            else:
+                defesas_cinturao[detentor_nome] = 0
 
     # Encontre a maior diferença de gols
     maior_goleada = 0
-    partida_maior_goleada = None
+    partida_maior_goleada = []
     for partida in partidas:
         diferenca_gols = abs(partida.placar_detentor_atual - partida.placar_desafiante)
         if diferenca_gols > maior_goleada:
             maior_goleada = diferenca_gols
-            partida_maior_goleada = partida
+            partida_maior_goleada = [partida]
+        elif diferenca_gols == maior_goleada:
+            partida_maior_goleada.append(partida)
     context = {'detentor_atual': detentor_atual, 
                'partidas': partidas, 
                'defesas_cinturao': defesas_cinturao,

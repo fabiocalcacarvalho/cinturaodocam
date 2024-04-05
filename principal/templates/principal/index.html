@@ -18,19 +18,24 @@
     {% endif %}
     
 <h2>Maior Goleada</h2> 
-    <p> 
-        {% if partida_maior_goleada.placar_detentor_atual > partida_maior_goleada.placar_desafiante %}
-        <strong>{{ partida_maior_goleada.detentor_atual }}</strong>
+
+<ul> {% for partida in partida_maior_goleada %}
+        <li>
+        {% if partida.placar_detentor_atual > partida.placar_desafiante %}
+        <strong>{{ partida.detentor_atual }}</strong>
         {% else %}
-            {{ partida_maior_goleada.detentor_atual }}
+            {{ partida.detentor_atual }}
         {% endif %}
-        {{ partida_maior_goleada.placar_detentor_atual }} {% if partida_maior_goleada.penaltis_detentor_atual or partida_maior_goleada.penaltis_desafiante %}({{ partida_maior_goleada.penaltis_detentor_atual }}){% endif %} x {% if partida_maior_goleada.penaltis_detentor_atual or partida_maior_goleada.penaltis_desafiante %}({{ partida_maior_goleada.penaltis_desafiante }}) {% endif %}{{ partida_maior_goleada.placar_desafiante }}
-        {% if partida_maior_goleada.placar_desafiante > partida_maior_goleada.placar_detentor_atual %}
-            <strong>{{ partida_maior_goleada.desafiante }}</strong>
+        {{ partida.placar_detentor_atual }} {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}({{ partida.penaltis_detentor_atual }}){% endif %} x {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}({{ partida.penaltis_desafiante }}) {% endif %}{{ partida.placar_desafiante }}
+        {% if partida.placar_desafiante > partida.placar_detentor_atual %}
+            <strong>{{ partida.desafiante }}</strong>
         {% else %}
-            {{ partida_maior_goleada.desafiante }}
+            {{ partida.desafiante }}
         {% endif %}
-    </p>
+        - {{ partida.data }}
+    </li>
+    {% endfor %}
+</ul>
     <h2>Partidas Anteriores:</h2>
     <ul>
         {% for partida in partidas %}
@@ -46,6 +51,7 @@
             {% else %}
                 {{ partida.desafiante }}
             {% endif %}
+            - {{ partida.data }}
         </li>
         {% endfor %}
     </ul>
