@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Cadastrar Nova Partida</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_detentor_atual">Detentor Atual:</label>
+        {{ form.detentor_atual }}
+    </div>
+    <div class="form-group">
+        <label for="id_desafiante">Desafiante:</label>
+        {{ form.desafiante }}
+    </div>
+    <div class="form-group">
+        <label for="id_data">Data:</label>
+        {{ form.data }}
+    </div>
+    <div class="form-group">
+        <label for="id_placar_detentor_atual">Placar Detentor Atual:</label>
+        {{ form.placar_detentor_atual }}
+    </div>
+    <div class="form-group">
+        <label for="id_placar_desafiante">Placar Desafiante:</label>
+        {{ form.placar_desafiante }}
+    </div>
+    <div class="form-group">
+        <label for="id_penaltis_detentor_atual">Penaltis Detentor Atual:</label>
+        {{ form.penaltis_detentor_atual }}
+    </div>
+    <div class="form-group">
+        <label for="id_penaltis_desafiante">Penaltis Desafiante:</label>
+        {{ form.penaltis_desafiante }}
+    </div>
+    <input type="submit" value="Cadastrar Partida">
+</form>
+{% endblock %}
