@@ -12,7 +12,10 @@
 
     <h2>Detentor Atual:</h2>
     {% if detentor_atual %}
-        <p>{{ detentor_atual }}</p>
+        <div style="display: flex; align-items: center;">
+            {% if detentor_atual.imagem_url %}<img src="{{ detentor_atual.imagem_url }}" alt="{{ detentor_atual }}" style="border-radius: 50%; width: 100px; height: 100px; margin-right: 10px;"> {% endif %}
+            <p>{{ detentor_atual }}</p>
+        </div>
     {% else %}
         <p>Não há detentor atual</p>
     {% endif %}

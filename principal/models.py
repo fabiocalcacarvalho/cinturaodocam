@@ -2,7 +2,7 @@ from django.db import models
 
 class Jogador(models.Model):
     nome = models.CharField(max_length=100)
-    imagem_url = models.URLField(max_length=200, null=True, blank=True)
+    imagem_url = models.URLField(max_length=800, null=True, blank=True)
     def __str__(self):
         return self.nome
 
