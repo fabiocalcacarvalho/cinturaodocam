@@ -81,8 +81,34 @@ def estatisticas(request):
             partida_maior_goleada = [partida]
         elif diferenca_gols == maior_goleada:
             partida_maior_goleada.append(partida)
+
+    # Maior numero de defesas consecutivas de cinturão
+    maior_sequencia = 0
+    jogador_maior_sequencia = None
+    defesas = 0
+    data_inicial = None
+    data_final = None
+    for partida in partidas:
+        jogador = partida.detentor_atual
+        if partida.detentor_atual == partida.determinar_vencedor():
+            defesas +=1
+        else:
+            defesas = 0
+            data_inicial = partida.data
+        if defesas > maior_sequencia:
+            maior_sequencia = defesas
+            jogador_maior_sequencia = jogador
+            data_final = partida.data
+    maior_sequencia = str(jogador_maior_sequencia) + ' (' + str(maior_sequencia) + ' defesas)'
+    data_maior_sequencia = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
     context = {'detentor_atual': detentor_atual, 
                'partidas': partidas, 
                'defesas_cinturao': defesas_cinturao,
-               'partida_maior_goleada': partida_maior_goleada,}
+               'partida_maior_goleada': partida_maior_goleada,
+               'maior_goleada': maior_goleada,
+               'maior_sequencia': maior_sequencia,
+               'data_maior_sequencia': data_maior_sequencia,
+               'total_partidas': len(partidas)
+               }
+
     return render(request, 'principal/index.html', context)

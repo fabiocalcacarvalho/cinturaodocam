@@ -20,6 +20,14 @@
         <p>Não há detentor atual</p>
     {% endif %}
     
+<h2>
+    Recorde de Sequência de Defesas
+</h2>
+<ul>
+    <li>
+    {{ maior_sequencia }} - {{ data_maior_sequencia }}
+    </li>
+</ul>
 <h2>Maior Goleada</h2> 
 
 <ul> {% for partida in partida_maior_goleada %}
@@ -38,6 +46,10 @@
         - {{ partida.data }}
     </li>
     {% endfor %}
+</ul>
+<h2>Total de Partidas de Cinturão Disputadas</h2>
+<ul>
+    <li>{{ total_partidas }} partidas</li>
 </ul>
     <h2>Partidas Anteriores:</h2>
     <ul>
