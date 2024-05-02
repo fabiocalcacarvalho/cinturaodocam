@@ -85,22 +85,34 @@ def estatisticas(request):
     # Maior numero de defesas consecutivas de cinturão
     maior_sequencia = 0
     jogador_maior_sequencia = None
-    defesas = 0
     data_inicial = None
     data_final = None
+    sequencia = []
     for partida in partidas:
         jogador = partida.detentor_atual
         if partida.detentor_atual == partida.determinar_vencedor():
-            defesas +=1
+            sequencia.append(partida)
+            if len(sequencia) > maior_sequencia:
+                maior_sequencia = len(sequencia)
+                jogador_maior_sequencia = jogador
+                data_inicial = sequencia[0].data
+                data_final = sequencia[-1].data
         else:
-            defesas = 0
-            data_inicial = partida.data
-        if defesas > maior_sequencia:
-            maior_sequencia = defesas
-            jogador_maior_sequencia = jogador
-            data_final = partida.data
+            sequencia = []
     maior_sequencia = str(jogador_maior_sequencia) + ' (' + str(maior_sequencia) + ' defesas)'
     data_maior_sequencia = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
+    
+    # Streak (sequência de defesas) do detentor atual
+    streak = 0
+    for partida in partidas:
+        if partida.detentor_atual == partida.determinar_vencedor():
+            streak += 1
+            data_final = partida.data
+        else:
+            streak = 0
+            data_inicial = partida.data
+    data_streak = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
+    # Criar o contexto
     context = {'detentor_atual': detentor_atual, 
                'partidas': partidas, 
                'defesas_cinturao': defesas_cinturao,
@@ -108,7 +120,9 @@ def estatisticas(request):
                'maior_goleada': maior_goleada,
                'maior_sequencia': maior_sequencia,
                'data_maior_sequencia': data_maior_sequencia,
-               'total_partidas': len(partidas)
+               'total_partidas': len(partidas),
+               'streak': streak,
+               'data_streak': data_streak,
                }
 
     return render(request, 'principal/index.html', context)
