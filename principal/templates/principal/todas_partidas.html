@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Todas as Partidas</h1>
+    <ul>
+        {% for partida in partida_list %}
+        <li>
+            {% if partida.placar_detentor_atual > partida.placar_desafiante or partida.penaltis_detentor_atual > partida.penaltis_desafiante %}
+                <strong>{{ partida.detentor_atual }}</strong>
+            {% else %}
+                {{ partida.detentor_atual }}
+            {% endif %}
+            {{ partida.placar_detentor_atual }} {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}({{ partida.penaltis_detentor_atual }}){% endif %} x {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}({{ partida.penaltis_desafiante }}) {% endif %}{{ partida.placar_desafiante }}
+            {% if partida.placar_desafiante > partida.placar_detentor_atual or partida.penaltis_desafiante > partida.penaltis_detentor_atual %}
+                <strong>{{ partida.desafiante }}</strong>
+            {% else %}
+                {{ partida.desafiante }}
+            {% endif %}
+            - {{ partida.data }}
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

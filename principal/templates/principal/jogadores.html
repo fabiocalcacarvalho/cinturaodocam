@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Estatísticas de Jogadores</h1>
+    <h5>Selecione o modo que deseja ver</h5>
+    <select class="form-select" id="modo">
+        <option value="Geral">Estatísticas Gerais</option>
+        <option value="Detentor">Estatísticas como Detentor</option>
+        <option value="Desafiante">Estatísticas como Desafiante</option>
+    </select>
+    <br><br>
+    <div id="geral">
+        <table class='table' border="1">
+            <tr>
+                <th>Nome</th>
+                <th>Partidas</th>
+                <th>Vitórias</th>
+                <th>Porcentagem de Vitórias</th>
+            </tr>
+            {% for stat in jogadores_stats %}
+            <tr>
+                <td><img src="{{ stat.jogador.imagem_url }}" alt="" style="width:3rem;">   {{ stat.jogador.nome }}</td>
+                <td>{{ stat.partidas }}</td>
+                <td>{{ stat.vitorias }}</td>
+                <td>{{ stat.porc_vitorias }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="detentor">
+        <table class='table' border="1">
+            <tr>
+                <th>Nome</th>
+                <th>Partidas</th>
+                <th>Vitórias</th>
+                <th>Porcentagem de Vitórias</th>
+            </tr>
+            {% for stat in jogadores_stats %}
+            <tr>
+                <td><img src="{{ stat.jogador.imagem_url }}" alt="" style="width:3rem;">   {{ stat.jogador.nome }}</td>
+                <td>{{ stat.partidas_como_detentor }}</td>
+                <td>{{ stat.vitorias_como_detentor }}</td>
+                <td>{{ stat.porc_vitorias_como_detentor }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="desafiante">
+        <table class='table' border="1">
+            <tr>
+                <th>Nome</th>
+                <th>Partidas</th>
+                <th>Vitórias</th>
+                <th>Porcentagem de Vitórias</th>
+            </tr>
+            {% for stat in jogadores_stats %}
+            <tr>
+                <td><img src="{{ stat.jogador.imagem_url }}" alt="" style="width:3rem;">   {{ stat.jogador.nome }}</td>
+                <td>{{ stat.partidas_como_desafiante }}</td>
+                <td>{{ stat.vitorias_como_desafiante }}</td>
+                <td>{{ stat.porc_vitorias_como_desafiante }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <script>
+            document.getElementById("geral").style.display = "block";
+            document.getElementById("detentor").style.display = "none";
+            document.getElementById("desafiante").style.display = "none";
+            document.getElementById("modo").addEventListener("change", function() {
+            document.getElementById("geral").style.display = this.value == "Geral" ? "block" : "none";
+            document.getElementById("detentor").style.display = this.value == "Detentor" ? "block" : "none";
+            document.getElementById("desafiante").style.display = this.value == "Desafiante" ? "block" : "none";
+        });
+    </script>
+{% endblock %}

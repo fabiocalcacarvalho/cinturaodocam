@@ -11,6 +11,29 @@ from .models import Partida, Jogador
 
 from .forms import PartidaForm
 
+def jogadores(request):
+    jogadores = Jogador.objects.all()
+    jogadores = Jogador.objects.all()
+    jogadores_stats = []
+    for jogador in jogadores:
+        jogadores_stats.append({
+            'jogador': jogador,
+            'partidas': jogador.quantidade_partidas(),
+            'vitorias': jogador.quantidade_vitorias(),
+            'porc_vitorias': jogador.porcentagem_vitorias(),
+            'partidas_como_detentor': jogador.quantidade_partidas_como_detentor(),
+            'vitorias_como_detentor': jogador.quantidade_vitorias_como_detentor(),
+            'porc_vitorias_como_detentor': jogador.porcentagem_vitorias_como_detentor(),
+            'partidas_como_desafiante': jogador.quantidade_partidas_como_desafiante(),
+            'vitorias_como_desafiante': jogador.quantidade_vitorias_como_desafiante(),
+            'porc_vitorias_como_desafiante': jogador.porcentagem_vitorias_como_desafiante()
+        })
+    
+    context = {
+        'jogadores_stats': jogadores_stats
+    }
+    return render(request, 'principal/jogadores.html', context)
+
 def cadastrar_partida(request):
     if request.method == 'POST':
         form = PartidaForm(request.POST)
@@ -112,9 +135,11 @@ def estatisticas(request):
             streak = 0
             data_inicial = partida.data
     data_streak = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
+    # ultimas 20 partidas
+    ultimas_partidas = partidas.order_by('-data')[:20]
     # Criar o contexto
     context = {'detentor_atual': detentor_atual, 
-               'partidas': partidas, 
+               'ultimas_partidas': ultimas_partidas, 
                'defesas_cinturao': defesas_cinturao,
                'partida_maior_goleada': partida_maior_goleada,
                'maior_goleada': maior_goleada,
@@ -126,3 +151,9 @@ def estatisticas(request):
                }
 
     return render(request, 'principal/index.html', context)
+
+class PartidaListView(ListView):
+    model = Partida
+    template_name = 'principal/todas_partidas.html'
+    def get_queryset(self):
+        return Partida.objects.all()
