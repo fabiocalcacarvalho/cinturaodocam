@@ -9,16 +9,26 @@
 </form>
 
 {% if partidas %}
+    <br>
+    <div class="row align-items-center justify-content-center">
+        <div class="col-sm-12 justify-content-center" style="text-align: center;display: flex; align-items: center;">
+            {% if jogador_1 %}<img src="{{ jogador_1.imagem_url }}" alt="{{ jogador_1 }}" style="border-radius: 50%; width: 100px; height: 100px; margin-right: 10px;"> {% endif %}
+            <p>x</p>
+            {% if jogador_2 %}<img src="{{ jogador_2.imagem_url }}" alt="{{ jogador_2 }}" style="border-radius: 50%; width: 100px; height: 100px; margin-left: 10px;"> {% endif %}
+        </div>
+    </div>
+    <br>
     Total de Partidas Encontradas: {{ partidas.count }}
-    <h3>Partidas entre {{ form.cleaned_data.jogador_1 }} e {{ form.cleaned_data.jogador_2 }}</h3>
     <div class="container">
         <section class='row'>
             <!-- Gráfico de Vitorias -->
-            <div id="vitorias_chart" class="col-sm-6" style="width: 100%;"></div>
+            <div id="vitorias_chart" class="col-sm-6 justify-content-center" style="width: 100%;"></div>
             <!-- Gráfico de Gols -->
-            <div id="gols_chart" class="col-sm-6" style="width: 100%;"></div>    
+            <div id="gols_chart" class="col-sm-6 justify-content-center" style="width: 100%;"></div>    
         </section>
     </div>
+    
+    <h3>Partidas entre {{ form.cleaned_data.jogador_1 }} e {{ form.cleaned_data.jogador_2 }}</h3>
     <ul>
         {% for partida in partidas %}
         <li>

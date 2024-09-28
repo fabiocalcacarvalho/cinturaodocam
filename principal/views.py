@@ -120,6 +120,8 @@ def historico_confrontos(request):
               
     context = {'form': form, 
                'partidas': partidas,
+               'jogador_1': jogador_1,
+               'jogador_2': jogador_2,
                'vitorias_jogador_1': vitorias_jogador_1,
                'vitorias_jogador_2': vitorias_jogador_2,
                'gols_marcados_jogador_1': gols_marcados_jogador_1,
