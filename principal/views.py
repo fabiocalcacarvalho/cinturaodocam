@@ -136,7 +136,7 @@ def estatisticas(request):
             data_inicial = partida.data
     data_streak = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
     # ultimas 20 partidas
-    ultimas_partidas = partidas.order_by('-data')[:20]
+    ultimas_partidas = partidas.order_by('-id')[:20]
     # Criar o contexto
     context = {'detentor_atual': detentor_atual, 
                'ultimas_partidas': ultimas_partidas, 
