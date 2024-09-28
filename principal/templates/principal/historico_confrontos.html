@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Histórico de Confrontos</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">Buscar</button>
+</form>
+
+{% if partidas %}
+    Total de Partidas Encontradas: {{ partidas.count }}
+    <h3>Partidas entre {{ form.cleaned_data.jogador_1 }} e {{ form.cleaned_data.jogador_2 }}</h3>
+    <div class="container">
+        <section class='row'>
+            <!-- Gráfico de Vitorias -->
+            <div id="vitorias_chart" class="col-sm-6" style="width: 100%;"></div>
+            <!-- Gráfico de Gols -->
+            <div id="gols_chart" class="col-sm-6" style="width: 100%;"></div>    
+        </section>
+    </div>
+    <ul>
+        {% for partida in partidas %}
+        <li>
+            Partida {{ partida.id }}:
+            {% if partida.placar_detentor_atual > partida.placar_desafiante or partida.penaltis_detentor_atual > partida.penaltis_desafiante %}
+                <strong>{{ partida.detentor_atual }}</strong>
+            {% else %}
+                {{ partida.detentor_atual }}
+            {% endif %}
+            {{ partida.placar_detentor_atual }} {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}({{ partida.penaltis_detentor_atual }}){% endif %} x {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}({{ partida.penaltis_desafiante }}) {% endif %}{{ partida.placar_desafiante }}
+            {% if partida.placar_desafiante > partida.placar_detentor_atual or partida.penaltis_desafiante > partida.penaltis_detentor_atual %}
+                <strong>{{ partida.desafiante }}</strong>
+            {% else %}
+                {{ partida.desafiante }}
+            {% endif %}
+            - {{ partida.data }}
+        </li>
+        {% endfor %}
+    </ul>
+
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChartVitorias);
+google.charts.setOnLoadCallback(drawChartGols);
+
+function drawChartVitorias() {
+  var data = google.visualization.arrayToDataTable([
+    ['Jogador', 'Vitórias'],
+    ['{{ form.cleaned_data.jogador_1 }}', {{ vitorias_jogador_1 }}],
+    ['{{ form.cleaned_data.jogador_2 }}', {{ vitorias_jogador_2 }}],
+  ]);
+
+  var options = {
+    title: 'Vitórias ({{ vitorias_jogador_1 }} x {{ vitorias_jogador_2 }})',
+    is3D: true,
+  };
+
+  var chart = new google.visualization.PieChart(document.getElementById('vitorias_chart'));
+  chart.draw(data, options);
+}
+
+function drawChartGols() {
+  var data = google.visualization.arrayToDataTable([
+    ['Jogador', 'Gols'],
+    ['{{ form.cleaned_data.jogador_1 }}', {{ gols_marcados_jogador_1 }}],
+    ['{{ form.cleaned_data.jogador_2 }}', {{ gols_marcados_jogador_2 }}],
+  ]);
+
+  var options = {
+    title: 'Gols marcados ({{ gols_marcados_jogador_1 }} x {{ gols_marcados_jogador_2 }})',
+    is3D: true,
+    legend: 'none',
+    hAxis: {
+        viewWindow: {
+            min: 0  // Define o valor mínimo do eixo horizontal como 0
+        },
+    },
+  };
+
+  var chart = new google.visualization.BarChart(document.getElementById('gols_chart'));
+  chart.draw(data, options);
+}
+</script>
+{% elif partidas is not none %}
+    <p>Nenhuma partida encontrada entre os jogadores selecionados.</p>
+{% endif %}
+{% endblock %}

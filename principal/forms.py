@@ -22,3 +22,7 @@ class PartidaForm(forms.ModelForm):
         if ultima_partida:
             ultimo_vencedor = ultima_partida.determinar_vencedor().nome
             self.fields['detentor_atual'].initial = Jogador.objects.filter(nome=ultimo_vencedor).first()
+
+class HistoricoConfrontosForm(forms.Form):
+    jogador_1 = forms.ModelChoiceField(queryset=Jogador.objects.all(), label='Jogador 1')
+    jogador_2 = forms.ModelChoiceField(queryset=Jogador.objects.all(), label='Jogador 2')

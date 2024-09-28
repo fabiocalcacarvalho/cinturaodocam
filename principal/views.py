@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import Partida
 from principal.models import Jogador
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from .forms import HistoricoConfrontosForm
+from django.db.models import Q, F, Sum
 def regulamento(request):
     # Lógica para renderizar a página do regulamento
     return render(request, 'principal/regulamento.html')
@@ -73,6 +75,61 @@ def cadastrar_partida(request):
         form = PartidaForm()
 
     return render(request, 'principal/cadastrar_partida.html', {'form': form})
+
+def historico_confrontos(request):
+    form = HistoricoConfrontosForm()
+    partidas = None
+    vitorias_jogador_1 = 0
+    vitorias_jogador_2 = 0
+    gols_marcados_jogador_1 = 0
+    gols_marcados_jogador_2 = 0
+    porcentagem_jogador_1 = 0
+    porcentagem_jogador_2 = 0
+    if request.method == 'POST':
+        form = HistoricoConfrontosForm(request.POST)
+        if form.is_valid():
+            jogador_1 = form.cleaned_data['jogador_1']
+            jogador_2 = form.cleaned_data['jogador_2']
+
+            # Filtra as partidas entre os dois jogadores, independentemente da ordem
+            partidas = Partida.objects.filter(
+                Q(detentor_atual=jogador_1) | Q(detentor_atual=jogador_2),
+                Q(desafiante=jogador_1) | Q(desafiante=jogador_2)
+            ).order_by('-id')
+            vitorias_jogador_1 = partidas.filter(Q(detentor_atual=jogador_1, placar_detentor_atual__gt=F('placar_desafiante'))
+                                                 | Q(detentor_atual=jogador_1, penaltis_detentor_atual__gt=F('penaltis_desafiante'))
+                                                 | Q(desafiante=jogador_1, placar_desafiante__gt=F('placar_detentor_atual')) 
+                                                 | Q(desafiante=jogador_1, penaltis_desafiante__gt=F('penaltis_detentor_atual'))).count()
+            vitorias_jogador_2 = partidas.filter(Q(detentor_atual=jogador_2, placar_detentor_atual__gt=F('placar_desafiante'))
+                                                 | Q(detentor_atual=jogador_2, penaltis_detentor_atual__gt=F('penaltis_desafiante'))
+                                                 | Q(desafiante=jogador_2, placar_desafiante__gt=F('placar_detentor_atual'))
+                                                 | Q(desafiante=jogador_2, penaltis_desafiante__gt=F('penaltis_detentor_atual'))).count()
+            gols_marcados_jogador_1 = partidas.filter(Q(detentor_atual=jogador_1)).aggregate(Sum('placar_detentor_atual'))['placar_detentor_atual__sum'] or 0
+            gols_marcados_jogador_1 += partidas.filter(Q(desafiante=jogador_1)).aggregate(Sum('placar_desafiante'))['placar_desafiante__sum'] or 0
+            gols_marcados_jogador_2 = partidas.filter(Q(detentor_atual=jogador_2)).aggregate(Sum('placar_detentor_atual'))['placar_detentor_atual__sum'] or 0
+            gols_marcados_jogador_2 += partidas.filter(Q(desafiante=jogador_2)).aggregate(Sum('placar_desafiante'))['placar_desafiante__sum'] or 0
+
+            # Cálculo das porcentagens
+            total_gols = gols_marcados_jogador_1 + gols_marcados_jogador_2
+            if total_gols > 0:
+                porcentagem_jogador_1 = (gols_marcados_jogador_1 / total_gols) * 100
+                porcentagem_jogador_2 = (gols_marcados_jogador_2 / total_gols) * 100
+            else:
+                porcentagem_jogador_1 = 0
+                porcentagem_jogador_2 = 0
+              
+    context = {'form': form, 
+               'partidas': partidas,
+               'vitorias_jogador_1': vitorias_jogador_1,
+               'vitorias_jogador_2': vitorias_jogador_2,
+               'gols_marcados_jogador_1': gols_marcados_jogador_1,
+               'gols_marcados_jogador_2': gols_marcados_jogador_2,
+               'porcentagem_jogador_1': porcentagem_jogador_1,
+               'porcentagem_jogador_2': porcentagem_jogador_2
+               }
+
+    return render(request, 'principal/historico_confrontos.html', context)
+
 class CreateJogadorView(CreateView):
     model = Jogador
     fields = ['nome', 'imagem_url']
