@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import date
-from django.db.models import Q, F
+from django.db.models import Q, F, Sum
 class Jogador(models.Model):
     nome = models.CharField(max_length=100)
     imagem_url = models.URLField(max_length=800, null=True, blank=True)
@@ -42,6 +42,84 @@ class Jogador(models.Model):
         if self.quantidade_partidas_como_desafiante() == 0:
             return 0
         return round((self.quantidade_vitorias_como_desafiante() / self.quantidade_partidas_como_desafiante()) * 100, 2)
+    
+    def gols_marcados(self):
+        detentor = Partida.objects.filter(
+            Q(detentor_atual=self)
+        ).aggregate(Sum('placar_detentor_atual'))['placar_detentor_atual__sum'] or 0
+        desafiante = Partida.objects.filter(
+            Q(desafiante=self)
+        ).aggregate(Sum('placar_desafiante'))['placar_desafiante__sum'] or 0
+        return detentor + desafiante
+    
+    def gols_marcados_por_partida(self):
+        if self.quantidade_partidas() == 0:
+            return 0
+        return round(self.gols_marcados() / self.quantidade_partidas(), 2)
+    def gols_marcados_como_detentor(self):
+        return Partida.objects.filter(
+            Q(detentor_atual=self)
+        ).aggregate(Sum('placar_detentor_atual'))['placar_detentor_atual__sum'] or 0
+    def gols_marcados_por_partida_como_detentor(self):
+        if self.quantidade_partidas_como_detentor() == 0:
+            return 0
+        return round(self.gols_marcados_como_detentor() / self.quantidade_partidas_como_detentor(), 2)
+    
+    def gols_marcados_como_desafiante(self):
+        return Partida.objects.filter(
+            Q(desafiante=self)
+        ).aggregate(Sum('placar_desafiante'))['placar_desafiante__sum'] or 0
+    
+    def gols_marcados_por_partida_como_desafiante(self):
+        if self.quantidade_partidas_como_desafiante() == 0:
+            return 0
+        return round(self.gols_marcados_como_desafiante() / self.quantidade_partidas_como_desafiante(), 2)
+
+    def gols_sofridos(self):
+        detentor = Partida.objects.filter(
+            Q(detentor_atual=self)
+        ).aggregate(Sum('placar_desafiante'))['placar_desafiante__sum'] or 0
+        desafiante = Partida.objects.filter(
+            Q(desafiante=self)
+        ).aggregate(Sum('placar_detentor_atual'))['placar_detentor_atual__sum'] or 0
+        return detentor + desafiante
+    def gols_sofridos_por_partida(self):
+        if self.quantidade_partidas() == 0:
+            return 0
+        return round(self.gols_sofridos() / self.quantidade_partidas(), 2)
+    def gols_sofridos_como_detentor(self):
+        return Partida.objects.filter(
+            Q(detentor_atual=self)
+        ).aggregate(Sum('placar_desafiante'))['placar_desafiante__sum'] or 0
+    def gols_sofridos_por_partida_como_detentor(self):
+        if self.quantidade_partidas_como_detentor() == 0:
+            return 0
+        return round(self.gols_sofridos_como_detentor() / self.quantidade_partidas_como_detentor(), 2)
+    
+    def gols_sofridos_como_desafiante(self):
+        return Partida.objects.filter(
+            Q(desafiante=self)
+        ).aggregate(Sum('placar_detentor_atual'))['placar_detentor_atual__sum'] or 0
+    def gols_sofridos_por_partida_como_desafiante(self):
+        if self.quantidade_partidas_como_desafiante() == 0:
+            return 0
+        return round(self.gols_sofridos_como_desafiante() / self.quantidade_partidas_como_desafiante(), 2)
+    
+    def saldo_de_gols(self):
+        if self.quantidade_partidas() == 0:
+            return 0
+        return (self.gols_marcados() - self.gols_sofridos())/self.quantidade_partidas()
+
+    def saldo_de_gols_como_detentor(self):
+        if self.quantidade_partidas_como_detentor() == 0:
+            return 0
+        return (self.gols_marcados_como_detentor() - self.gols_sofridos_como_detentor())/self.quantidade_partidas_como_detentor()
+
+    def saldo_de_gols_como_desafiante(self):
+        if self.quantidade_partidas_como_desafiante() == 0:
+            return 0
+        return (self.gols_marcados_como_desafiante() - self.gols_sofridos_como_desafiante())/self.quantidade_partidas_como_desafiante()
+
     def __str__(self):
         return self.nome
     

@@ -26,7 +26,23 @@ def jogadores(request):
             'porc_vitorias_como_detentor': jogador.porcentagem_vitorias_como_detentor(),
             'partidas_como_desafiante': jogador.quantidade_partidas_como_desafiante(),
             'vitorias_como_desafiante': jogador.quantidade_vitorias_como_desafiante(),
-            'porc_vitorias_como_desafiante': jogador.porcentagem_vitorias_como_desafiante()
+            'porc_vitorias_como_desafiante': jogador.porcentagem_vitorias_como_desafiante(),
+            'gols_marcados_como_detentor': jogador.gols_marcados_como_detentor(),
+            'gols_marcados_como_desafiante': jogador.gols_marcados_como_desafiante(),
+            'gols_marcados_por_partida_como_detentor': jogador.gols_marcados_por_partida_como_detentor(),
+            'gols_marcados_por_partida_como_desafiante': jogador.gols_marcados_por_partida_como_desafiante(),
+            'gols_marcados_por_partida': jogador.gols_marcados_por_partida(),
+            'gols_marcados': jogador.gols_marcados(),
+            'gols_sofridos_como_detentor': jogador.gols_sofridos_como_detentor(),
+            'gols_sofridos_como_desafiante': jogador.gols_sofridos_como_desafiante(),
+            'gols_sofridos': jogador.gols_sofridos(),
+            'gols_sofridos_por_partida_como_detentor': jogador.gols_sofridos_por_partida_como_detentor(),
+            'gols_sofridos_por_partida_como_desafiante': jogador.gols_sofridos_por_partida_como_desafiante(),
+            'gols_sofridos_por_partida': jogador.gols_sofridos_por_partida(),
+            'saldo_de_gols_como_detentor': jogador.saldo_de_gols_como_detentor(),
+            'saldo_de_gols_como_desafiante': jogador.saldo_de_gols_como_desafiante(),
+            'saldo_de_gols': jogador.saldo_de_gols(),
+
         })
     
     context = {

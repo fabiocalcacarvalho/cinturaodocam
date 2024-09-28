@@ -15,7 +15,12 @@
                 <th>Nome</th>
                 <th>Partidas</th>
                 <th>Vitórias</th>
-                <th>Porcentagem de Vitórias</th>
+                <th>% de Vitórias</th>
+                <th>GM</th>
+                <th>GC</th>
+                <th>SG/jogo</th>
+                <th>GM/jogo</th>
+                <th>GC/jogo</th>
             </tr>
             {% for stat in jogadores_stats %}
             <tr>
@@ -23,6 +28,11 @@
                 <td>{{ stat.partidas }}</td>
                 <td>{{ stat.vitorias }}</td>
                 <td>{{ stat.porc_vitorias }}</td>
+                <td>{{ stat.gols_marcados }}</td>
+                <td>{{ stat.gols_sofridos }}</td>
+                <td>{{ stat.saldo_de_gols|floatformat:2 }}</td>
+                <td>{{ stat.gols_marcados_por_partida|floatformat:2 }}</td>
+                <td>{{ stat.gols_sofridos_por_partida|floatformat:2 }}</td>
             </tr>
             {% endfor %}
         </table>
@@ -33,7 +43,12 @@
                 <th>Nome</th>
                 <th>Partidas</th>
                 <th>Vitórias</th>
-                <th>Porcentagem de Vitórias</th>
+                <th>% de Vitórias</th>
+                <th>GM</th>
+                <th>GC</th>
+                <th>SG/jogo</th>
+                <th>GM/jogo</th>
+                <th>GC/jogo</th>
             </tr>
             {% for stat in jogadores_stats %}
             <tr>
@@ -41,6 +56,11 @@
                 <td>{{ stat.partidas_como_detentor }}</td>
                 <td>{{ stat.vitorias_como_detentor }}</td>
                 <td>{{ stat.porc_vitorias_como_detentor }}</td>
+                <td>{{ stat.gols_marcados_como_detentor }}</td>
+                <td>{{ stat.gols_sofridos_como_detentor }}</td>
+                <td>{{ stat.saldo_de_gols_como_detentor|floatformat:2 }}</td>
+                <td>{{ stat.gols_marcados_por_partida_como_detentor|floatformat:2 }}</td>
+                <td>{{ stat.gols_sofridos_por_partida_como_detentor|floatformat:2 }}</td>
             </tr>
             {% endfor %}
         </table>
@@ -51,7 +71,12 @@
                 <th>Nome</th>
                 <th>Partidas</th>
                 <th>Vitórias</th>
-                <th>Porcentagem de Vitórias</th>
+                <th>% de Vitórias</th>
+                <th>GM</th>
+                <th>GC</th>
+                <th>SG/jogo</th>
+                <th>GM/jogo</th>
+                <th>GC/jogo</th>
             </tr>
             {% for stat in jogadores_stats %}
             <tr>
@@ -59,6 +84,11 @@
                 <td>{{ stat.partidas_como_desafiante }}</td>
                 <td>{{ stat.vitorias_como_desafiante }}</td>
                 <td>{{ stat.porc_vitorias_como_desafiante }}</td>
+                <td>{{ stat.gols_marcados_como_desafiante }}</td>
+                <td>{{ stat.gols_sofridos_como_desafiante }}</td>
+                <td>{{ stat.saldo_de_gols_como_desafiante|floatformat:2 }}</td>
+                <td>{{ stat.gols_marcados_por_partida_como_desafiante|floatformat:2 }}</td>
+                <td>{{ stat.gols_sofridos_por_partida_como_desafiante|floatformat:2 }}</td>
             </tr>
             {% endfor %}
         </table>
