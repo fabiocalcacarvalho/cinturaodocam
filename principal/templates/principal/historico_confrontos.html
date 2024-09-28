@@ -74,14 +74,19 @@ function drawChartVitorias() {
 
 function drawChartGols() {
   var data = google.visualization.arrayToDataTable([
-    ['Jogador', 'Gols'],
-    ['{{ form.cleaned_data.jogador_1 }}', {{ gols_marcados_jogador_1 }}],
-    ['{{ form.cleaned_data.jogador_2 }}', {{ gols_marcados_jogador_2 }}],
+    ['Jogador', 'Gols', 'Gols2'],
+    ['{{ form.cleaned_data.jogador_1 }}', {{ gols_marcados_jogador_1 }},0],
+    ['{{ form.cleaned_data.jogador_2 }}',0, {{ gols_marcados_jogador_2 }}],
   ]);
 
   var options = {
     title: 'Gols marcados ({{ gols_marcados_jogador_1 }} x {{ gols_marcados_jogador_2 }})',
-    is3D: true,
+    
+    isStacked: true,
+    series: {
+        0: { color: '#3366cc' }, // Cor da primeira barra (jogador 1)
+        1: { color: '#dc3912' }   // Cor da segunda barra (jogador 2)
+      },
     legend: 'none',
     hAxis: {
         viewWindow: {
