@@ -85,6 +85,8 @@ def historico_confrontos(request):
     gols_marcados_jogador_2 = 0
     porcentagem_jogador_1 = 0
     porcentagem_jogador_2 = 0
+    jogador_1 = None
+    jogador_2 = None
     if request.method == 'POST':
         form = HistoricoConfrontosForm(request.POST)
         if form.is_valid():
