@@ -200,8 +200,10 @@ def estatisticas(request):
         else:
             sequencia = []
     maior_sequencia = str(jogador_maior_sequencia) + ' (' + str(maior_sequencia) + ' defesas)'
-    data_maior_sequencia = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
-    
+    if data_inicial and data_final:
+        data_maior_sequencia = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
+    else:
+        data_maior_sequencia = 'Nenhuma'
     # Streak (sequência de defesas) do detentor atual
     streak = 0
     for partida in partidas:
