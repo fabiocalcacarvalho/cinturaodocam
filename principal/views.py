@@ -213,7 +213,10 @@ def estatisticas(request):
         else:
             streak = 0
             data_inicial = partida.data
-    data_streak = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
+    if data_inicial and data_final:
+        data_streak = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
+    else:
+        data_streak = 'Nenhuma'
     # ultimas 20 partidas
     ultimas_partidas = partidas.order_by('-id')[:20]
     # Criar o contexto
