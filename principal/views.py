@@ -145,94 +145,94 @@ class CreateJogadorView(CreateView):
     def get_template_names(self):
         return 'principal/cadastrar_jogador.html'
 
+from django.db.models import Count
+from django.db.models.functions import Abs
+import time
 def estatisticas(request):
+
+    # Obtenha o tempo de execução
+    start_time = time.time()
     # Obtenha o detentor atual
     ultima_partida = Partida.objects.last()
-    if ultima_partida:
-        detentor_atual = ultima_partida.determinar_vencedor()
-    else:
-        detentor_atual = None
+    detentor_atual = ultima_partida.determinar_vencedor() if ultima_partida else None
 
     # Obtenha todas as partidas
     partidas = Partida.objects.all()
-    
+
     # Contagem de defesas de cinturão por jogador
     defesas_cinturao = {}
     for partida in partidas:
         detentor_nome = partida.detentor_atual.nome
+        vencedor = partida.determinar_vencedor()
         if detentor_nome in defesas_cinturao:
-            # Se o detentor atual vencer a partida, incrementamos a contagem de defesas
-            if partida.detentor_atual == partida.determinar_vencedor():
+            if partida.detentor_atual == vencedor:
                 defesas_cinturao[detentor_nome] += 1
         else:
-            # Inicializamos a contagem com 1 se o detentor venceu a partida
-            if partida.detentor_atual == partida.determinar_vencedor():
-                defesas_cinturao[detentor_nome] = 1
-            else:
-                defesas_cinturao[detentor_nome] = 0
+            defesas_cinturao[detentor_nome] = 1 if partida.detentor_atual == vencedor else 0
 
-    # Encontre a maior diferença de gols
+    # Maior goleada - lista de partidas com maior diferença de gols
     maior_goleada = 0
-    partida_maior_goleada = []
+    partidas_maior_goleada = []
     for partida in partidas:
         diferenca_gols = abs(partida.placar_detentor_atual - partida.placar_desafiante)
         if diferenca_gols > maior_goleada:
             maior_goleada = diferenca_gols
-            partida_maior_goleada = [partida]
+            partidas_maior_goleada = [partida]
         elif diferenca_gols == maior_goleada:
-            partida_maior_goleada.append(partida)
+            partidas_maior_goleada.append(partida)
 
-    # Maior numero de defesas consecutivas de cinturão
+    # Maior sequência de defesas de cinturão
     maior_sequencia = 0
     jogador_maior_sequencia = None
     data_inicial = None
     data_final = None
+    streak = 0
     sequencia = []
+    data_streak_inicio = None
+    data_streak_fim = None
+
     for partida in partidas:
-        jogador = partida.detentor_atual
-        if partida.detentor_atual == partida.determinar_vencedor():
+        vencedor = partida.determinar_vencedor()
+        if partida.detentor_atual == vencedor:
+            if streak == 0:
+                data_streak_inicio = partida.data  # Marca o início do streak
+            streak += 1
+            data_streak_fim = partida.data  # Atualiza o final do streak
             sequencia.append(partida)
-            if len(sequencia) > maior_sequencia:
-                maior_sequencia = len(sequencia)
-                jogador_maior_sequencia = jogador
+            if streak > maior_sequencia:
+                maior_sequencia = streak
+                jogador_maior_sequencia = partida.detentor_atual
                 data_inicial = sequencia[0].data
                 data_final = sequencia[-1].data
         else:
-            sequencia = []
-    maior_sequencia = str(jogador_maior_sequencia) + ' (' + str(maior_sequencia) + ' defesas)'
-    if data_inicial and data_final:
-        data_maior_sequencia = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
-    else:
-        data_maior_sequencia = 'Nenhuma'
-    # Streak (sequência de defesas) do detentor atual
-    streak = 0
-    for partida in partidas:
-        if partida.detentor_atual == partida.determinar_vencedor():
-            streak += 1
-            data_final = partida.data
-        else:
             streak = 0
-            data_inicial = partida.data
-    if data_inicial and data_final:
-        data_streak = data_inicial.strftime('%d/%m/%Y') + ' a ' + data_final.strftime('%d/%m/%Y')
-    else:
-        data_streak = 'Nenhuma'
-    # ultimas 20 partidas
-    ultimas_partidas = partidas.order_by('-id')[:20]
-    # Criar o contexto
-    context = {'detentor_atual': detentor_atual, 
-               'ultimas_partidas': ultimas_partidas, 
-               'defesas_cinturao': defesas_cinturao,
-               'partida_maior_goleada': partida_maior_goleada,
-               'maior_goleada': maior_goleada,
-               'maior_sequencia': maior_sequencia,
-               'data_maior_sequencia': data_maior_sequencia,
-               'total_partidas': len(partidas),
-               'streak': streak,
-               'data_streak': data_streak,
-               }
+            sequencia = []
+
+    maior_sequencia_str = f"{jogador_maior_sequencia} ({maior_sequencia} defesas)" if jogador_maior_sequencia else 'Nenhuma'
+    data_maior_sequencia = f"{data_inicial.strftime('%d/%m/%Y')} a {data_final.strftime('%d/%m/%Y')}" if data_inicial and data_final else 'Nenhuma'
+    data_streak = f"{data_streak_inicio.strftime('%d/%m/%Y')} a {data_streak_fim.strftime('%d/%m/%Y')}" if data_streak_inicio and data_streak_fim else 'Nenhuma'
+
+    # Contexto para o template
+    context = {
+        'detentor_atual': detentor_atual,
+        'ultimas_partidas': partidas.order_by('-id')[:20],
+        'defesas_cinturao': defesas_cinturao,
+        'partidas_maior_goleada': partidas_maior_goleada,
+        'maior_goleada': maior_goleada,
+        'maior_sequencia': maior_sequencia_str,
+        'data_maior_sequencia': data_maior_sequencia,
+        'total_partidas': partidas.count(),
+        'streak': streak,
+        'data_streak': data_streak,  # Adicionado ao contexto
+    }
+
+    # Obtenha o tempo de execução
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print(f"Tempo de execução: {execution_time} segundos")
 
     return render(request, 'principal/index.html', context)
+
 
 class PartidaListView(ListView):
     model = Partida

@@ -37,23 +37,31 @@
 </ul>
 <h2>Maior Goleada</h2> 
 
-<ul> {% for partida in partida_maior_goleada %}
+<ul> 
+    {% for partida in partidas_maior_goleada %}
         <li>
-        {% if partida.placar_detentor_atual > partida.placar_desafiante %}
-        <strong>{{ partida.detentor_atual }}</strong>
-        {% else %}
-            {{ partida.detentor_atual }}
-        {% endif %}
-        {{ partida.placar_detentor_atual }} {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}({{ partida.penaltis_detentor_atual }}){% endif %} x {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}({{ partida.penaltis_desafiante }}) {% endif %}{{ partida.placar_desafiante }}
-        {% if partida.placar_desafiante > partida.placar_detentor_atual %}
-            <strong>{{ partida.desafiante }}</strong>
-        {% else %}
-            {{ partida.desafiante }}
-        {% endif %}
-        - {{ partida.data }}
-    </li>
+            {% if partida.placar_detentor_atual > partida.placar_desafiante %}
+                <strong>{{ partida.detentor_atual }}</strong>
+            {% else %}
+                {{ partida.detentor_atual }}
+            {% endif %}
+            {{ partida.placar_detentor_atual }} 
+            {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}
+                ({{ partida.penaltis_detentor_atual }})
+            {% endif %} x 
+            {% if partida.penaltis_detentor_atual or partida.penaltis_desafiante %}
+                ({{ partida.penaltis_desafiante }}) 
+            {% endif %}
+            {{ partida.placar_desafiante }}
+            {% if partida.placar_desafiante > partida.placar_detentor_atual %}
+                <strong>{{ partida.desafiante }}</strong>
+            {% else %}
+                {{ partida.desafiante }}
+            {% endif %}
+        </li>
     {% endfor %}
-</ul>
+    </ul>
+    
 <h2>Total de Partidas de Cinturão Disputadas</h2>
 <ul>
     <li>{{ total_partidas }} partidas</li>
